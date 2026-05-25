@@ -1,13 +1,5 @@
 import React, { useMemo, useState } from "react";
-import {
-  ArrowLeft,
-  Globe2,
-  Search,
-  ShoppingCart,
-  ShieldCheck,
-  Star,
-  Truck,
-} from "lucide-react";
+import { ArrowLeft, Globe2, Search, ShoppingCart, ShieldCheck, Star, Truck } from "lucide-react";
 
 const SIZES = ["S", "M", "L", "XL", "XXL", "XXXL"];
 
@@ -49,7 +41,7 @@ const NHL_TEAMS = {
           "Kaiden Guhle",
         ],
       },
-      { team: "Ottawa Senators", players: ["Brady Tkachuk", "Tim Stützle", "Jake Sanderson", "Thomas Chabot", "Daniel Alfredsson"] },
+      { team: "Ottawa Senators", players: ["Brady Tkachuk", "Tim Stutzle", "Jake Sanderson", "Thomas Chabot", "Daniel Alfredsson"] },
       { team: "Tampa Bay Lightning", players: ["Nikita Kucherov", "Brayden Point", "Victor Hedman", "Andrei Vasilevskiy", "Steven Stamkos"] },
       { team: "Toronto Maple Leafs", players: ["Auston Matthews", "Mitch Marner", "William Nylander", "John Tavares", "Mats Sundin"] },
     ],
@@ -174,8 +166,9 @@ function runDataChecks() {
   console.assert(Boolean(NHL_TEAMS.Ouest), "Expected Western Conference");
   const canadiens = teams.find((item) => item.team === "Montréal Canadiens");
   console.assert(Boolean(canadiens), "Expected Montréal Canadiens to exist");
-  console.assert(canadiens?.players.includes("Ivan Demidov"), "Expected Ivan Demidov in Montréal Canadiens players");
-  console.assert(canadiens?.players.includes("Kaiden Guhle"), "Expected Kaiden Guhle in Montréal Canadiens players");
+  console.assert(canadiens && canadiens.players.includes("Ivan Demidov"), "Expected Ivan Demidov in Canadiens players");
+  console.assert(canadiens && canadiens.players.includes("Kaiden Guhle"), "Expected Kaiden Guhle in Canadiens players");
+  console.assert(Array.from({ length: 100 }, (_, index) => index).includes(99), "Expected custom number 99 option");
 }
 
 runDataChecks();
@@ -196,11 +189,7 @@ function TeamPage({ team, lang, text, onBack, addToCart }) {
   return (
     <main className="min-h-screen bg-neutral-950 text-white">
       <div className="mx-auto max-w-7xl px-4 py-8">
-        <button
-          type="button"
-          onClick={onBack}
-          className="mb-6 inline-flex items-center gap-2 rounded-2xl border border-white/15 px-5 py-3 font-bold text-white/80 hover:border-orange-300 hover:text-orange-300"
-        >
+        <button type="button" onClick={onBack} className="mb-6 inline-flex items-center gap-2 rounded-2xl border border-white/15 px-5 py-3 font-bold text-white/80 hover:border-orange-300 hover:text-orange-300">
           <ArrowLeft size={18} />
           {text.back}
         </button>
@@ -218,15 +207,10 @@ function TeamPage({ team, lang, text, onBack, addToCart }) {
             const customName = current.name || "TREMBLAY";
             const customNumber = current.number || "31";
             const title = lang === "fr" ? jersey.fr : jersey.en;
-            const cartName = jersey.key === "custom"
-              ? `${title} - ${customName} #${customNumber} - ${selectedSize}`
-              : `${title} - ${selectedPlayer} - ${selectedSize}`;
+            const cartName = jersey.key === "custom" ? `${title} - ${customName} #${customNumber} - ${selectedSize}` : `${title} - ${selectedPlayer} - ${selectedSize}`;
 
             return (
-              <article
-                key={jersey.key}
-                className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-xl shadow-black/20"
-              >
+              <article key={jersey.key} className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-xl shadow-black/20">
                 <div className="grid h-56 place-items-center bg-gradient-to-br from-neutral-800 to-neutral-950">
                   <div className="text-center">
                     <div className="text-6xl">🏒</div>
@@ -235,74 +219,40 @@ function TeamPage({ team, lang, text, onBack, addToCart }) {
                 </div>
 
                 <div className="p-5">
-                  <div className="mb-2 w-fit rounded-full bg-orange-500 px-3 py-1 text-xs font-black text-neutral-950">
-                    {money(jersey.price)}
-                  </div>
+                  <div className="mb-2 w-fit rounded-full bg-orange-500 px-3 py-1 text-xs font-black text-neutral-950">{money(jersey.price)}</div>
                   <h2 className="text-xl font-black">{title}</h2>
 
                   {jersey.key === "custom" ? (
                     <div>
                       <p className="mt-2 text-sm text-white/55">{text.customNotice}</p>
                       <label className="mt-5 block text-sm font-bold text-white/70">{text.familyName}</label>
-                      <input
-                        value={customName}
-                        maxLength={14}
-                        onChange={(event) => updateChoice(jersey.key, "name", event.target.value.toUpperCase())}
-                        className="mt-2 w-full rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none focus:border-orange-300"
-                      />
+                      <input value={customName} maxLength={14} onChange={(event) => updateChoice(jersey.key, "name", event.target.value.toUpperCase())} className="mt-2 w-full rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none focus:border-orange-300" />
                       <label className="mt-4 block text-sm font-bold text-white/70">{text.number}</label>
-                      <select
-                        value={customNumber}
-                        onChange={(event) => updateChoice(jersey.key, "number", event.target.value)}
-                        className="mt-2 w-full rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none focus:border-orange-300"
-                      >
+                      <select value={customNumber} onChange={(event) => updateChoice(jersey.key, "number", event.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none focus:border-orange-300">
                         {Array.from({ length: 100 }, (_, index) => (
-                          <option key={index} value={String(index)}>
-                            {index}
-                          </option>
+                          <option key={index} value={String(index)}>{index}</option>
                         ))}
                       </select>
                     </div>
                   ) : (
                     <div>
                       <label className="mt-5 block text-sm font-bold text-white/70">{text.player}</label>
-                      <select
-                        value={selectedPlayer}
-                        onChange={(event) => updateChoice(jersey.key, "player", event.target.value)}
-                        className="mt-2 w-full rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none focus:border-orange-300"
-                      >
+                      <select value={selectedPlayer} onChange={(event) => updateChoice(jersey.key, "player", event.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none focus:border-orange-300">
                         {team.players.map((player) => (
-                          <option key={player} value={player}>
-                            {player}
-                          </option>
+                          <option key={player} value={player}>{player}</option>
                         ))}
                       </select>
                     </div>
                   )}
 
                   <label className="mt-4 block text-sm font-bold text-white/70">{text.size}</label>
-                  <select
-                    value={selectedSize}
-                    onChange={(event) => updateChoice(jersey.key, "size", event.target.value)}
-                    className="mt-2 w-full rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none focus:border-orange-300"
-                  >
+                  <select value={selectedSize} onChange={(event) => updateChoice(jersey.key, "size", event.target.value)} className="mt-2 w-full rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 outline-none focus:border-orange-300">
                     {SIZES.map((size) => (
-                      <option key={size} value={size}>
-                        {size}
-                      </option>
+                      <option key={size} value={size}>{size}</option>
                     ))}
                   </select>
 
-                  <button
-                    type="button"
-                    onClick={() => addToCart({
-                      id: `${team.team}-${jersey.key}-${Date.now()}`,
-                      name: cartName,
-                      team: team.team,
-                      price: jersey.price,
-                    })}
-                    className="mt-5 w-full rounded-2xl bg-orange-500 px-4 py-3 font-black text-neutral-950 transition hover:bg-orange-300"
-                  >
+                  <button type="button" onClick={() => addToCart({ id: `${team.team}-${jersey.key}-${Date.now()}`, name: cartName, team: team.team, price: jersey.price })} className="mt-5 w-full rounded-2xl bg-orange-500 px-4 py-3 font-black text-neutral-950 transition hover:bg-orange-300">
                     {text.add}
                   </button>
                 </div>
@@ -326,17 +276,13 @@ export default function App() {
   const text = TRANSLATIONS[lang];
 
   const nhlTeamList = useMemo(() => {
-    if (!conference) {
-      return [];
-    }
+    if (!conference) return [];
     return Object.values(NHL_TEAMS[conference]).flat();
   }, [conference]);
 
   const filteredNhlTeams = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
-    if (!normalizedQuery) {
-      return nhlTeamList;
-    }
+    if (!normalizedQuery) return nhlTeamList;
     return nhlTeamList.filter((team) => team.team.toLowerCase().includes(normalizedQuery));
   }, [nhlTeamList, query]);
 
@@ -362,29 +308,17 @@ export default function App() {
   }
 
   if (selectedTeam) {
-    return (
-      <TeamPage
-        team={selectedTeam}
-        lang={lang}
-        text={text}
-        onBack={() => setSelectedTeam(null)}
-        addToCart={addToCart}
-      />
-    );
+    return <TeamPage team={selectedTeam} lang={lang} text={text} onBack={() => setSelectedTeam(null)} addToCart={addToCart} />;
   }
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white">
-      <div className="bg-orange-500 px-4 py-2 text-center text-sm font-black text-neutral-950">
-        Affichez vos couleurs / Show your colors - Passion Sports Boutique
-      </div>
+      <div className="bg-orange-500 px-4 py-2 text-center text-sm font-black text-neutral-950">Affichez vos couleurs / Show your colors - Passion Sports Boutique</div>
 
       <header className="sticky top-0 z-50 border-b border-white/10 bg-neutral-950/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
           <button type="button" onClick={resetHome} className="flex items-center gap-3 text-left">
-            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-orange-400 to-red-600 text-xl font-black text-neutral-950">
-              PS
-            </div>
+            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-orange-400 to-red-600 text-xl font-black text-neutral-950">PS</div>
             <div>
               <div className="text-xl font-black">Passion Sports</div>
               <div className="-mt-1 text-xs uppercase tracking-[0.35em] text-orange-300">Boutique</div>
@@ -392,33 +326,19 @@ export default function App() {
           </button>
 
           <nav className="hidden gap-6 md:flex">
-            <button type="button" onClick={resetHome} className="font-bold text-white/75 hover:text-orange-300">
-              {text.home}
-            </button>
-            <a href="#sports" className="font-bold text-white/75 hover:text-orange-300">
-              {text.sports}
-            </a>
-            <a href="#cart" className="font-bold text-white/75 hover:text-orange-300">
-              {text.cart}
-            </a>
+            <button type="button" onClick={resetHome} className="font-bold text-white/75 hover:text-orange-300">{text.home}</button>
+            <a href="#sports" className="font-bold text-white/75 hover:text-orange-300">{text.sports}</a>
+            <a href="#cart" className="font-bold text-white/75 hover:text-orange-300">{text.cart}</a>
           </nav>
 
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setLang(lang === "fr" ? "en" : "fr")}
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-3 py-2 font-bold hover:border-orange-300 hover:text-orange-300"
-            >
+            <button type="button" onClick={() => setLang(lang === "fr" ? "en" : "fr")} className="inline-flex items-center gap-2 rounded-full border border-white/15 px-3 py-2 font-bold hover:border-orange-300 hover:text-orange-300">
               <Globe2 size={16} />
               {lang === "fr" ? "EN" : "FR"}
             </button>
             <a href="#cart" className="relative rounded-full bg-white px-3 py-2 text-neutral-950 hover:bg-orange-300">
               <ShoppingCart size={18} />
-              {cart.length > 0 ? (
-                <span className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-orange-500 text-xs font-black">
-                  {cart.length}
-                </span>
-              ) : null}
+              {cart.length > 0 ? <span className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-orange-500 text-xs font-black">{cart.length}</span> : null}
             </a>
           </div>
         </div>
@@ -430,26 +350,17 @@ export default function App() {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(249,115,22,0.25),transparent_30%),radial-gradient(circle_at_80%_10%,rgba(239,68,68,0.18),transparent_25%)]" />
             <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-20 lg:grid-cols-[1.1fr_0.9fr] lg:py-28">
               <div>
-                <div className="mb-5 inline-flex rounded-full border border-orange-400/30 bg-orange-400/10 px-4 py-2 text-sm font-bold text-orange-200">
-                  LNH - NFL - MLB - NBA - WWE
-                </div>
+                <div className="mb-5 inline-flex rounded-full border border-orange-400/30 bg-orange-400/10 px-4 py-2 text-sm font-bold text-orange-200">LNH - NFL - MLB - NBA - WWE</div>
                 <h1 className="text-5xl font-black tracking-tight md:text-7xl">Passion Sports Boutique</h1>
                 <p className="mt-5 text-2xl font-bold text-orange-300">{text.subtitle}</p>
                 <p className="mt-5 max-w-2xl text-lg leading-8 text-white/70">{text.hero}</p>
-                <a
-                  href="#sports"
-                  className="mt-8 inline-flex rounded-2xl bg-orange-500 px-7 py-4 font-black text-neutral-950 shadow-2xl shadow-orange-500/20 hover:bg-orange-300"
-                >
-                  {text.shop}
-                </a>
+                <a href="#sports" className="mt-8 inline-flex rounded-2xl bg-orange-500 px-7 py-4 font-black text-neutral-950 shadow-2xl shadow-orange-500/20 hover:bg-orange-300">{text.shop}</a>
               </div>
 
               <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/40">
                 <div className="grid grid-cols-2 gap-4">
                   {["LNH", "NFL", "MLB", "NBA"].map((item) => (
-                    <div key={item} className="grid h-40 place-items-center rounded-[1.5rem] bg-neutral-900 text-4xl font-black text-orange-300">
-                      {item}
-                    </div>
+                    <div key={item} className="grid h-40 place-items-center rounded-[1.5rem] bg-neutral-900 text-4xl font-black text-orange-300">{item}</div>
                   ))}
                 </div>
               </div>
@@ -482,28 +393,13 @@ export default function App() {
               <p className="mt-2 text-white/60">{text.route}</p>
             </div>
             {sport ? (
-              <button
-                type="button"
-                onClick={resetHome}
-                className="rounded-2xl border border-white/15 px-5 py-3 font-bold hover:border-orange-300 hover:text-orange-300"
-              >
-                {text.back}
-              </button>
+              <button type="button" onClick={resetHome} className="rounded-2xl border border-white/15 px-5 py-3 font-bold hover:border-orange-300 hover:text-orange-300">{text.back}</button>
             ) : null}
           </div>
 
           <div className="grid gap-4 md:grid-cols-5">
             {["LNH", "NFL", "MLB", "NBA", "WWE"].map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => selectSport(item)}
-                className={`rounded-[2rem] border px-6 py-10 text-3xl font-black transition ${
-                  sport === item
-                    ? "border-orange-300 bg-orange-500 text-neutral-950"
-                    : "border-white/10 bg-white/[0.04] hover:border-orange-300"
-                }`}
-              >
+              <button key={item} type="button" onClick={() => selectSport(item)} className={`rounded-[2rem] border px-6 py-10 text-3xl font-black transition ${sport === item ? "border-orange-300 bg-orange-500 text-neutral-950" : "border-white/10 bg-white/[0.04] hover:border-orange-300"}`}>
                 {item}
               </button>
             ))}
@@ -512,14 +408,71 @@ export default function App() {
           {sport === "LNH" ? (
             <div className="mt-10">
               <div className="mb-6 flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={() => setConference("Est")}
-                  className={`rounded-2xl px-5 py-3 font-black ${
-                    conference === "Est" ? "bg-orange-500 text-neutral-950" : "bg-white/10 text-white/75 hover:bg-white/15"
-                  }`}
-                >
-                  {text.east}
-                </button>
-                <button
-                  type="button"
+                <button type="button" onClick={() => setConference("Est")} className={`rounded-2xl px-5 py-3 font-black ${conference === "Est" ? "bg-orange-500 text-neutral-950" : "bg-white/10 text-white/75 hover:bg-white/15"}`}>{text.east}</button>
+                <button type="button" onClick={() => setConference("Ouest")} className={`rounded-2xl px-5 py-3 font-black ${conference === "Ouest" ? "bg-orange-500 text-neutral-950" : "bg-white/10 text-white/75 hover:bg-white/15"}`}>{text.west}</button>
+              </div>
+
+              {conference ? (
+                <div>
+                  <label className="relative mb-6 block max-w-md">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={18} />
+                    <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={text.searchTeam} className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pl-11 pr-4 outline-none focus:border-orange-300" />
+                  </label>
+
+                  <div className="grid gap-8 lg:grid-cols-2">
+                    {Object.entries(NHL_TEAMS[conference]).map(([division, teams]) => (
+                      <div key={division} className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6">
+                        <h3 className="mb-5 text-2xl font-black text-orange-300">Division {division}</h3>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          {teams.filter((team) => filteredTeamNames.has(team.team)).map((team) => (
+                            <button key={team.team} type="button" onClick={() => setSelectedTeam(team)} className="rounded-2xl bg-white/5 px-4 py-4 text-left font-bold text-white/80 transition hover:bg-orange-500 hover:text-neutral-950">{team.team}</button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          {sport && sport !== "LNH" ? (
+            <div className="mt-10 rounded-[2rem] border border-white/10 bg-white/[0.04] p-8">
+              <h3 className="text-3xl font-black text-orange-300">{sport}</h3>
+              <p className="mt-2 text-white/60">{text.coming}</p>
+              <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {OTHER_SPORTS[sport].map((item) => (
+                  <div key={item} className="rounded-2xl bg-white/5 px-4 py-4 font-bold text-white/80">{item}</div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </section>
+
+        <section id="cart" className="mx-auto max-w-7xl px-4 py-16">
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6">
+            <h2 className="mb-6 text-3xl font-black">{text.cart}</h2>
+            {cart.length === 0 ? (
+              <p className="text-white/60">{text.empty}</p>
+            ) : (
+              <div className="grid gap-4">
+                {cart.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between gap-4 rounded-2xl bg-white/5 p-4">
+                    <div>
+                      <div className="font-bold">{item.name}</div>
+                      <div className="text-sm text-white/55">{item.team}</div>
+                    </div>
+                    <div className="font-black text-orange-300">{money(item.price)}</div>
+                  </div>
+                ))}
+                <div className="flex justify-end border-t border-white/10 pt-4 text-xl font-black">{text.subtotal}: <span className="ml-3 text-orange-300">{money(subtotal)}</span></div>
+              </div>
+            )}
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-white/10 bg-black px-4 py-8 text-center text-sm text-white/45">© 2026 Passion Sports Boutique - info@passionsportsboutique.com</footer>
+    </div>
+  );
+}

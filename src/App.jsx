@@ -63,7 +63,20 @@ const otherSports = {
   NFL: ["Kansas City Chiefs", "Buffalo Bills", "Dallas Cowboys", "Philadelphia Eagles", "San Francisco 49ers", "Green Bay Packers"],
   MLB: ["Toronto Blue Jays", "New York Yankees", "Los Angeles Dodgers", "Boston Red Sox", "New York Mets", "Montréal Expos"],
   NBA: ["Toronto Raptors", "Los Angeles Lakers", "Boston Celtics", "Chicago Bulls", "Golden State Warriors", "New York Knicks"],
+  "FIFA Soccer": ["Canada", "France", "Portugal", "Argentine", "Brésil", "Italie", "Espagne", "Inter Miami"],
   WWE: ["Roman Reigns", "Cody Rhodes", "The Rock", "John Cena", "Stone Cold", "The Undertaker"],
+};
+
+const productCategories = [
+  { key: "jerseys", fr: "Chandails", en: "Jerseys" },
+  { key: "caps", fr: "Casquettes", en: "Caps" },
+  { key: "merch", fr: "Marchandises", en: "Merchandise" },
+];
+
+const merchandiseExamples = {
+  jerseys: { fr: "Chandails réguliers, alternatifs et personnalisés", en: "Regular, alternate and custom jerseys" },
+  caps: { fr: "Casquettes ajustables, snapback et modèles d'équipe", en: "Adjustable caps, snapbacks and team styles" },
+  merch: { fr: "T-Shirt, Hoodie, réplique de casque NFL et autres produits", en: "T-shirts, hoodies, NFL helmet replicas and more" },
 };
 
 const text = {
@@ -125,6 +138,8 @@ function runTests() {
   const teams = allNhlTeams();
   console.assert(teams.length === 32, `Expected 32 NHL teams, got ${teams.length}`);
   console.assert(jerseyTypes.length === 6, "Expected 6 jersey types");
+  console.assert(Object.prototype.hasOwnProperty.call(otherSports, "FIFA Soccer"), "Expected FIFA Soccer sport option");
+  console.assert(productCategories.length === 3, "Expected 3 product categories");
   console.assert(jerseyTypes.some((item) => item.key === "custom"), "Expected custom jersey type");
   console.assert(sizes.includes("XXXL"), "Expected XXXL size");
   const canadiens = teams.find((item) => item.team === "Montréal Canadiens");
@@ -201,6 +216,7 @@ function TeamPage({ team, lang, t, onBack, addToCart }) {
 export default function App() {
   const [lang, setLang] = useState("fr");
   const [sport, setSport] = useState(null);
+  const [productCategory, setProductCategory] = useState(null);
   const [conference, setConference] = useState(null);
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [query, setQuery] = useState("");
@@ -222,12 +238,12 @@ export default function App() {
     <div style={styles.page}>
       <div style={styles.announcement}>Affichez vos couleurs / Show your colors - Passion Sports Boutique</div>
       <header style={styles.header}>
-        <button type="button" onClick={() => { setSport(null); setConference(null); }} style={styles.logoButton}>
+        <button type="button" onClick={() => { setSport(null); setProductCategory(null); setConference(null); }} style={styles.logoButton}>
           <div style={styles.logo}>PS</div>
           <div><div style={styles.logoText}>Passion Sports</div><div style={styles.logoSub}>Boutique</div></div>
         </button>
         <nav style={styles.nav}>
-          <button type="button" onClick={() => { setSport(null); setConference(null); }} style={styles.navButton}>{t.home}</button>
+          <button type="button" onClick={() => { setSport(null); setProductCategory(null); setConference(null); }} style={styles.navButton}>{t.home}</button>
           <a href="#sports" style={styles.navLink}>{t.sports}</a>
           <a href="#cart" style={styles.navLink}>{t.cart}</a>
         </nav>
@@ -248,7 +264,7 @@ export default function App() {
               <a href="#sports" style={styles.primaryButton}>{t.shop}</a>
             </div>
             <div style={styles.heroPanel}>
-              {['LNH', 'NFL', 'MLB', 'NBA'].map((item) => <div key={item} style={styles.sportTile}>{item}</div>)}
+              {['LNH', 'NFL', 'MLB', 'NBA', 'FIFA Soccer', 'WWE'].map((item) => <div key={item} style={styles.sportTile}>{item}</div>)}
             </div>
           </section>
           <section style={styles.trustGrid}>
@@ -260,15 +276,34 @@ export default function App() {
       <section id="sports" style={styles.section}>
         <div style={styles.sectionHeader}>
           <div><h2 style={styles.sectionTitle}>{t.chooseSport}</h2><p style={styles.muted}>Sports - conférence/ligue - équipe - chandail - joueur/grandeur.</p></div>
-          {sport && <button type="button" onClick={() => { setSport(null); setConference(null); }} style={styles.secondaryButton}>{t.back}</button>}
+          {sport && <button type="button" onClick={() => { setSport(null); setProductCategory(null); setConference(null); }} style={styles.secondaryButton}>{t.back}</button>}
         </div>
         <div style={styles.sportGrid}>
-          {["LNH", "NFL", "MLB", "NBA", "WWE"].map((item) => (
-            <button key={item} type="button" onClick={() => { setSport(item); setConference(null); }} style={sport === item ? styles.sportButtonActive : styles.sportButton}>{item}</button>
+          {["LNH", "NFL", "MLB", "NBA", "FIFA Soccer", "WWE"].map((item) => (
+            <button key={item} type="button" onClick={() => { setSport(item); setProductCategory(null); setConference(null); }} style={sport === item ? styles.sportButtonActive : styles.sportButton}>{item}</button>
           ))}
         </div>
 
-        {sport === "LNH" && (
+        {sport && (
+          <div style={styles.categoryArea}>
+            <h3 style={styles.categoryTitle}>Choisir une catégorie</h3>
+            <div style={styles.categoryGrid}>
+              {productCategories.map((category) => (
+                <button
+                  key={category.key}
+                  type="button"
+                  onClick={() => setProductCategory(category.key)}
+                  style={productCategory === category.key ? styles.categoryButtonActive : styles.categoryButton}
+                >
+                  <strong>{lang === "fr" ? category.fr : category.en}</strong>
+                  <span>{lang === "fr" ? merchandiseExamples[category.key].fr : merchandiseExamples[category.key].en}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {sport === "LNH" && productCategory === "jerseys" && (
           <div style={styles.conferenceArea}>
             <div style={styles.buttonRow}>
               <button type="button" onClick={() => setConference("Est")} style={conference === "Est" ? styles.choiceActive : styles.choiceButton}>{t.east}</button>
@@ -292,9 +327,18 @@ export default function App() {
           </div>
         )}
 
-        {sport && sport !== "LNH" && (
+        {sport === "LNH" && productCategory && productCategory !== "jerseys" && (
+          <div style={styles.comingCard}>
+            <h3 style={styles.divisionTitle}>{productCategories.find((item) => item.key === productCategory)?.fr}</h3>
+            <p style={styles.muted}>{lang === "fr" ? merchandiseExamples[productCategory].fr : merchandiseExamples[productCategory].en}</p>
+            <p style={styles.muted}>Prochaine étape : ajouter les produits de chaque équipe pour cette catégorie.</p>
+          </div>
+        )}
+
+        {sport && sport !== "LNH" && productCategory && (
           <div style={styles.comingCard}>
             <h3 style={styles.divisionTitle}>{sport}</h3>
+            <p style={styles.muted}>{lang === "fr" ? merchandiseExamples[productCategory].fr : merchandiseExamples[productCategory].en}</p>
             <p style={styles.muted}>{t.coming}</p>
             <div style={styles.teamGrid}>{otherSports[sport].map((item) => <div key={item} style={styles.teamButton}>{item}</div>)}</div>
           </div>
@@ -335,7 +379,7 @@ const styles = {
   heroText: { color: "rgba(255,255,255,0.7)", fontSize: 18, lineHeight: 1.7, maxWidth: 650 },
   primaryButton: { display: "inline-block", marginTop: 22, background: "#f97316", color: "#111", borderRadius: 18, padding: "16px 26px", fontWeight: 900, textDecoration: "none", fontSize: 18 },
   heroPanel: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 32, padding: 24 },
-  sportTile: { display: "grid", placeItems: "center", minHeight: 145, borderRadius: 24, background: "#111", color: "#fdba74", fontSize: 38, fontWeight: 900 },
+  sportTile: { display: "grid", placeItems: "center", minHeight: 120, borderRadius: 24, background: "#111", color: "#fdba74", fontSize: 26, fontWeight: 900, textAlign: "center", padding: 12 },
   trustGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(210px,1fr))", gap: 16, maxWidth: 1200, margin: "0 auto", padding: "26px 5%", borderTop: "1px solid rgba(255,255,255,0.1)", borderBottom: "1px solid rgba(255,255,255,0.1)" },
   trustCard: { background: "rgba(255,255,255,0.05)", borderRadius: 18, padding: 18, fontWeight: 900 },
   section: { maxWidth: 1200, margin: "0 auto", padding: "70px 5%" },
@@ -343,6 +387,11 @@ const styles = {
   sectionTitle: { fontSize: 38, fontWeight: 900, margin: 0, color: "#ffffff" },
   muted: { color: "rgba(255,255,255,0.62)", lineHeight: 1.6 },
   sportGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 16 },
+  categoryArea: { marginTop: 28, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 28, padding: 24 },
+  categoryTitle: { margin: "0 0 16px", color: "#ffffff", fontSize: 24, fontWeight: 900 },
+  categoryGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 16 },
+  categoryButton: { display: "grid", gap: 8, textAlign: "left", border: "1px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.06)", color: "white", borderRadius: 22, padding: 20, cursor: "pointer" },
+  categoryButtonActive: { display: "grid", gap: 8, textAlign: "left", border: "1px solid #fdba74", background: "#f97316", color: "#111", borderRadius: 22, padding: 20, cursor: "pointer" },
   sportButton: { border: "1px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.04)", color: "white", borderRadius: 24, padding: "34px 18px", fontSize: 30, fontWeight: 900, cursor: "pointer" },
   sportButtonActive: { border: "1px solid #fdba74", background: "#f97316", color: "#111", borderRadius: 24, padding: "34px 18px", fontSize: 30, fontWeight: 900, cursor: "pointer" },
   secondaryButton: { border: "1px solid rgba(255,255,255,0.18)", background: "transparent", color: "white", borderRadius: 16, padding: "13px 18px", fontWeight: 900, cursor: "pointer" },

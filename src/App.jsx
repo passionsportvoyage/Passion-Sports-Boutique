@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Globe2, Search, ShoppingCart, ShieldCheck, Star, Truck } from "lucide-react";
 
 const SIZES = ["S", "M", "L", "XL", "XXL", "XXXL"];
@@ -266,6 +266,17 @@ function TeamPage({ team, lang, text, onBack, addToCart }) {
 }
 
 export default function App() {
+  useEffect(() => {
+    const existingScript = document.getElementById("tailwind-cdn");
+    if (!existingScript) {
+      const script = document.createElement("script");
+      script.id = "tailwind-cdn";
+      script.src = "https://cdn.tailwindcss.com";
+      script.async = true;
+      document.head.appendChild(script);
+    }
+  }, []);
+
   const [lang, setLang] = useState("fr");
   const [sport, setSport] = useState(null);
   const [conference, setConference] = useState(null);
